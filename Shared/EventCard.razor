@@ -1,0 +1,12 @@
+@using EventEase.Models
+@inherits LayoutComponentBase
+
+<div class="card p-3 m-2 border rounded shadow-sm">
+    <h4>@Event.Name</h4>
+    <p><strong>Date:</strong> @Event.Date.ToShortDateString()</p>
+    <p><strong>Location:</strong> @Event.Location</p>
+</div>
+
+@code {
+    [Parameter] public EventModel Event { get; set; }
+}

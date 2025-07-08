@@ -1,0 +1,62 @@
+@page "/register/{EventName}"
+@using System.ComponentModel.DataAnnotations
+@using EventEase.Models
+@using EventEase.Services
+@inject UserSessionService UserSession
+
+<h3>Register for @EventName</h3>
+
+<EditForm Model="Register" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Your Name:</label>
+        <InputText class="form-control" @bind-Value="Register.Name" />
+        <ValidationMessage For="@(() => Register.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Your Email:</label>
+        <InputText class="form-control" @bind-Value="Register.Email" />
+        <ValidationMessage For="@(() => Register.Email)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@if (IsRegistered)
+{
+    <div class="alert alert-success mt-3">
+        Successfully registered for @EventName!
+    </div>
+}
+
+@code {
+    [Parameter] public string EventName { get; set; }
+
+    private RegistrationModel Register = new();
+    private bool IsRegistered = false;
+
+    private void HandleSubmit()
+    {
+        UserSession.AddRegistration(new AttendanceRecord
+        {
+            EventName = EventName,
+            UserName = Register.Name,
+            Email = Register.Email
+        });
+
+        IsRegistered = true;
+    }
+
+    public class RegistrationModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; }
+    }
+}

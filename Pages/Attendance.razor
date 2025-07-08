@@ -1,0 +1,35 @@
+@page "/attendance"
+@using EventEase.Models
+@using EventEase.Services
+@inject UserSessionService UserSession
+@inject EventService EventService
+
+<h3>Event Attendance Overview</h3>
+
+@foreach (var ev in EventService.GetEvents())
+{
+    <div class="card mb-3 p-3">
+        <h4>@ev.Name (@ev.Date.ToShortDateString())</h4>
+        <p><strong>Location:</strong> @ev.Location</p>
+
+        <h5 class="mt-2">Registered Attendees:</h5>
+
+        @{
+            var attendees = UserSession.GetRegistrationsForEvent(ev.Name);
+        }
+
+        @if (attendees.Count == 0)
+        {
+            <p class="text-muted">No one has registered yet.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var person in attendees)
+                {
+                    <li>@person.UserName (@person.Email)</li>
+                }
+            </ul>
+        }
+    </div>
+}

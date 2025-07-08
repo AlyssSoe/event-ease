@@ -1,0 +1,29 @@
+@page "/events"
+@using EventEase.Models
+@using EventEase.Shared
+@using EventEase.Services
+@inject EventService EventService
+
+<h3>Upcoming Events</h3>
+
+@if (Events.Count == 0)
+{
+    <p>No events available.</p>
+}
+else
+{
+    @foreach (var ev in Events)
+    {
+        <EventCard Event="ev" />
+        <a class="btn btn-primary m-1" href="/events/@ev.Name">View Details</a>
+    }
+}
+
+@code {
+    private List<EventModel> Events;
+
+    protected override void OnInitialized()
+    {
+        Events = EventService.GetEvents();
+    }
+}

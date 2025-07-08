@@ -1,0 +1,52 @@
+@page "/create"
+@using EventEase.Models
+@using EventEase.Services
+@inject NavigationManager Navigation
+@inject EventService EventService
+@inject UserSessionService UserSession
+
+<h3>Create a New Event</h3>
+
+<EditForm Model="NewEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Event Name:</label>
+        <InputText class="form-control" @bind-Value="NewEvent.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Event Date:</label>
+        <InputDate class="form-control" @bind-Value="NewEvent.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Location:</label>
+        <InputText class="form-control" @bind-Value="NewEvent.Location" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Event</button>
+</EditForm>
+
+@if (IsCreated)
+{
+    <div class="alert alert-success mt-3">
+        Event created successfully! Redirecting to events...
+    </div>
+}
+
+@code {
+    private EventModel NewEvent = new();
+    private bool IsCreated = false;
+
+    private async Task HandleValidSubmit()
+    {
+        EventService.AddEvent(NewEvent);
+        UserSession.AddCreatedEvent(NewEvent);  // Track user-created event
+
+        IsCreated = true;
+        await Task.Delay(1500);
+        Navigation.NavigateTo("/events");
+    }
+}
